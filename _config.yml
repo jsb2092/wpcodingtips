@@ -1,0 +1,13 @@
+# Site settings
+name: WinPhone/RT Coding Tips
+title: WinPhone/RT Coding Tips
+email: info@wpcodingtips.com
+description: "This site is designed to give you tips and trick on coding with Windows Phone, in particular, using common controls, tips on how to use features, universal apps and publishing apps."
+baseurl: ""
+url: "http://wpcodingtipcs.com"
+
+# Build settings
+markdown: kramdown
+permalinks: pretty
+
+destination: /usr/share/nginx/html

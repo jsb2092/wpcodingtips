@@ -1,0 +1,26 @@
+---
+layout: default
+---
+
+<div class="mainHome" >
+
+  <h1>Posts</h1>
+
+  <ul class="posts">
+    {% for post in site.posts %}
+      <li>
+
+	<img class='smallPlatformImg' src="/assets/{{ post.platform }}.png"</image>
+        <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+        <span class="post-date">{{ post.date | date: "%b %-d, %Y" }}</span>
+	<p>{{ post.excerpt }}</p>
+	<p class="readmore"><a href="{{ site.baseurl}}{{ post.url }}">Read more<i class="fa fa-chevron-circle-right"></i></a></p>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | prepend: site.baseurl }}">via RSS</a></p>
+</div>
+<div class="searchBox">Search: <input type='text' id='search'/>
+  <div id="results"></div>
+</div>

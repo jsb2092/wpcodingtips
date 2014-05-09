@@ -1,0 +1,25 @@
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% if page.title %}{{ page.title }}{% else %}{{ site.name }}{% endif %}</title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="description" content="{{ site.description }}">
+    <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseurl }}">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ "/css/main.css" | prepend: site.baseurl }}">
+    <script src="/js/jekyll-search.js"></script>
+	<script>
+window.onload=function(){
+JekyllSearch.init({
+    searchInput: document.getElementById("search"),
+    searchResults: document.getElementById("results"),
+    searchResultsHeader: "",
+    jsonFile: "search.json",
+    template: "<div class='resultItem'><div class='resultImgDiv'><img src='/assets/{platform}.png' class='searchPlatformImg'/></div><div class='resultLinkDiv'><a class='searchResult' href='{url}'>{title}</a></div></div>",
+    fuzzy: true
+});
+};
+</script>
+
+</head>

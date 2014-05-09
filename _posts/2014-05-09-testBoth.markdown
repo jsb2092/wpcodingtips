@@ -1,0 +1,62 @@
+---
+layout: post
+title:  "The how and why of bindings"
+date:   2014-05-09 16:15:00
+tags: binding datamodel
+category: mvvm
+platform: both
+---
+
+If you have ever created a Windows Phone App, or even a Windows RT app, using the template, you will notice that the default app uses DataContext, ItemSource with the value set to {Binding xxxxx}.  We are here to explain what all this means, and in general how it works.
+
+{% highlight c# %}
+private Windows.UI.Xaml.Shapes.Rectangle fence;
+private BasicGeoposition fencePos;
+private MapControl myMap;
+{% endhighlight %}
+
+my loaded function then looks like this:
+
+{% highlight c# %}
+private void MyMap_OnLoaded(object sender, RoutedEventArgs e)
+{
+    myMap = (MapControl) sender;
+    myMap.Center = new Geopoint(new BasicGeoposition()
+    {
+	Altitude = 643, 
+	Latitude = 43.089863,
+	Longitude = -77.669609
+    });
+    myMap.ZoomLevel = 14;
+    fencePos = new BasicGeoposition()
+    {
+	Latitude = 43.089863, 
+	Longitude = -77.669609
+    };
+    var point = new Geopoint(fencePos);
+
+    fence = new Windows.UI.Xaml.Shapes.Rectangle
+    {
+	Width = 30, 
+	Height = 30
+    };
+
+    var img = new BitmapImage(new Uri("ms-appx:///Assets/redpin.png"));
+    fence.Fill = new ImageBrush()
+    {
+	ImageSource = img
+    };
+
+    MapControl.SetLocation(fence, point);
+    MapControl.SetNormalizedAnchorPoint(fence, new Point(1.0, 0.5));
+
+    myMap.Children.Add(fence);
+
+    fence.Tapped += (o, args) =>
+    {
+	var myDialog = new MessageDialog( "You clicked on something");
+	myDialog.ShowAsync();
+    };
+}
+
+{% endhighlight %}
