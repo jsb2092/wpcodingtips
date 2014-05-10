@@ -10,7 +10,7 @@ html, body { height: 100%; }
 
 body {
   font-family: Helvetica, Arial, sans-serif;
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.4;
   font-weight: 300;
   background-color: #fdfdfd;
@@ -119,7 +119,7 @@ a:visited { color: #205caa; }
 
 .site-footer li,
 .site-footer p {
-  font-size: 15px;
+  font-size: 14px;
   letter-spacing: -.3px;
   color: #828282;
 }
@@ -186,7 +186,7 @@ a:visited { color: #205caa; }
 
 .posts .post-date {
   display: block;
-  font-size: 15px;
+  font-size: 14px;
   color: #818181;
 }
 
@@ -204,7 +204,7 @@ a:visited { color: #205caa; }
 }
 
 .post-header .meta {
-  font-size: 15px;
+  font-size: 14px;
   color: #818181;
   margin-top: 5px;
 }
@@ -275,10 +275,20 @@ a:visited { color: #205caa; }
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
-  font-size: 15px;
+  font-size: 12px;
 }
 
-.post code { padding: 1px 5px; }
+
+.post .linenodiv pre {
+  padding: 8px 2px;
+  text-align: right;
+}
+
+.linenodiv {
+  color: white;
+}
+
+.post code { padding: 0px; }
 
 .post ul,
 .post ol { margin-left: 1.35em; }
@@ -442,4 +452,19 @@ a:visited { color: #205caa; }
     width: auto;
     margin: 0 0 15px; }
 
+}
+
+pre code {
+    counter-reset: line-numbering;
+}
+
+pre code .line::before {
+    content: counter(line-numbering);
+    counter-increment: line-numbering;
+    padding-right: 1em; /* space after numbers */
+    color: white;
+    width: 1.5em;
+    float: left;
+    text-align: right;
+    opacity: 0.5;
 }

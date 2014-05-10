@@ -24,28 +24,28 @@ private void MyMap_OnLoaded(object sender, RoutedEventArgs e)
     myMap = (MapControl) sender;
     myMap.Center = new Geopoint(new BasicGeoposition()
     {
-	Altitude = 643, 
-	Latitude = 43.089863,
-	Longitude = -77.669609
+        Altitude = 643, 
+        Latitude = 43.089863,
+        Longitude = -77.669609
     });
     myMap.ZoomLevel = 14;
     fencePos = new BasicGeoposition()
     {
-	Latitude = 43.089863, 
-	Longitude = -77.669609
+        Latitude = 43.089863, 
+        Longitude = -77.669609
     };
     var point = new Geopoint(fencePos);
 
     fence = new Windows.UI.Xaml.Shapes.Rectangle
     {
-	Width = 30, 
-	Height = 30
+        Width = 30, 
+        Height = 30
     };
 
     var img = new BitmapImage(new Uri("ms-appx:///Assets/redpin.png"));
     fence.Fill = new ImageBrush()
     {
-	ImageSource = img
+        ImageSource = img
     };
 
     MapControl.SetLocation(fence, point);
@@ -55,8 +55,8 @@ private void MyMap_OnLoaded(object sender, RoutedEventArgs e)
 
     fence.Tapped += (o, args) =>
     {
-	var myDialog = new MessageDialog( "You clicked on something");
-	myDialog.ShowAsync();
+        var myDialog = new MessageDialog( "You clicked on something");
+        myDialog.ShowAsync();
     };
 }
 
