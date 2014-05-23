@@ -1,6 +1,19 @@
 ---
 layout: default
 ---
+  <script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'wpcodingtips'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+    </script>
+
 
 <div class="mainHome" >
 
@@ -12,7 +25,7 @@ layout: default
 
 	<img class='smallPlatformImg' src="/assets/{{ post.platform }}.png"</image>
         <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-        <span class="post-date">{{ post.date | date: "%b %-d, %Y" }}</span>
+        <span class="post-date">{{ post.date | date: "%b %-d, %Y" }} - <a href="{{post.url| prepend: site.baseurl }}#disqus_thread">Loading Comments...</a></span>
 	<p>{{ post.excerpt }}</p>
 	<p class="readmore"><a href="{{ site.baseurl}}{{ post.url }}">Read more<i class="fa fa-chevron-circle-right"></i></a></p>
       </li>
