@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "The how and why of bindings"
-date:   2014-05-09 16:15:00
+date:   2014-05-22 16:15:00
 tags: binding datamodel
 category: mvvm
 platform: both
@@ -9,54 +9,72 @@ platform: both
 
 If you have ever created a Windows Phone App, or even a Windows RT app, using the template, you will notice that the default app uses DataContext, ItemSource with the value set to {Binding xxxxx}.  We are here to explain what all this means, and in general how it works.
 
+The biggest challenge people face is that when they create an app using the template, they see data, and everything *just works*.  Great, but what if you want to change something?  In order to understand how to change something, we need to understand how it works.  The best part about this is that Intellisense even works, making your job even easier.
+
+The first thing we need to concern ourselves with is the DataContext. I am going to start by creating a Windows Phone Hub App.  The rules are the same for a desktop app, but if you are following along at home, we are using a Windows Phone App.  Opening up the HubPage.xaml, you will find 2 lines at the top that are key:
 {% highlight c# %}
-private Windows.UI.Xaml.Shapes.Rectangle fence;
-private BasicGeoposition fencePos;
-private MapControl myMap;
+DataContext="{Binding DefaultViewModel, RelativeSource={RelativeSource Self}}"
+d:DataContext=
+    "{Binding Source={d:DesignData Source=/DataModel/SampleData.json, Type=data:SampleDataSource}}"
 {% endhighlight %}
 
-my loaded function then looks like this:
+Let's take these one at a time, although they are very much related.  The first line does a couple things.  First is the **Binding DefaultViewModel** This the key of the DataContext.  It is saying simply that any ItemSource that exists in this page context is going to be looked for in the DefaultViewModel.  Simple enough.  The problem is this, it won't work without the second part, the **RelativeSource={RelativeSource Self}}**.  Every DataContext needs either a Source, ElementName or RelativeSource set.  In this scenario, we set RelativeSource to be Self - for all intents and purposes is saying that we can find the DefaultViewModel in the code behind for the HubPage.xaml (also know as the HubPage.xaml.cs).  Low and behold, if we look at the code, we do indeed find the **DefaultViewModel** in the HubPage.xaml.cs; the code below is a snippet from HubPage.xaml.cs
 
 {% highlight c# %}
-private void MyMap_OnLoaded(object sender, RoutedEventArgs e)
+public ObservableDictionary DefaultViewModel
 {
-    myMap = (MapControl) sender;
-    myMap.Center = new Geopoint(new BasicGeoposition()
-    {
-	Altitude = 643, 
-	Latitude = 43.089863,
-	Longitude = -77.669609
-    });
-    myMap.ZoomLevel = 14;
-    fencePos = new BasicGeoposition()
-    {
-	Latitude = 43.089863, 
-	Longitude = -77.669609
-    };
-    var point = new Geopoint(fencePos);
-
-    fence = new Windows.UI.Xaml.Shapes.Rectangle
-    {
-	Width = 30, 
-	Height = 30
-    };
-
-    var img = new BitmapImage(new Uri("ms-appx:///Assets/redpin.png"));
-    fence.Fill = new ImageBrush()
-    {
-	ImageSource = img
-    };
-
-    MapControl.SetLocation(fence, point);
-    MapControl.SetNormalizedAnchorPoint(fence, new Point(1.0, 0.5));
-
-    myMap.Children.Add(fence);
-
-    fence.Tapped += (o, args) =>
-    {
-	var myDialog = new MessageDialog( "You clicked on something");
-	myDialog.ShowAsync();
-    };
+    get { return this.defaultViewModel; }
 }
-
 {% endhighlight %}
+
+Moving on to the 2nd line.  This is not needed for any project, but it certainly makes things easier for the designer.  The **d:DataContext** is simply the DataContext that will be used for the Designer.  The also has a Binding, as required.  You remember earlier when I said the DataContext needs either a Source, ElementName or RelativeSource set?  Well, this one has a source.  It is a concrete Source of **DataModel/SampleData.json** This file can be found in your project.  Finally, the type is set to **data:SampleDataSource**.  This is saying that the class that the json is loaded into is the SampleDataSource class.  That's it for the DataContext.  In this case, we are binding to a viewModel (always a good idea, but it's certainly not necessary).
+
+Ok, we've explained the DataContext, but how do we get data to show up?  Let's take a look at the data that showing up when you run your Hub Application.  The easiest way to see this is to hit the play button at the top.  You'll find code similar to the block below in the HubPage.xaml.  I have removed some of the superfluous code, but the import binding pieces are below, and we'll go through how they work.
+
+{% highlight c# %}
+<HubSection x:Uid="HubSection1" Header="SECTION 1" DataContext="{Binding Groups}">
+    <DataTemplate>
+        <ListView ItemsSource="{Binding}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock Text="{Binding Title}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </DataTemplate>
+</HubSection>
+{% endhighlight %}
+
+The first binding we encounter is a **DataContext="{Binding Groups}** This is again telling us that everything below this in the XAML tree is bound to Groups.  Where is Groups found?  You remember the **Binding DefaultViewModel** from earlier?  If we look closely, we find:
+
+{% highlight c# %}
+var sampleDataGroups = await SampleDataSource.GetGroupsAsync();
+this.DefaultViewModel["Groups"] = sampleDataGroups; 
+{% endhighlight %}
+
+we we are assigning sampleDataGroups to the DefaultViewModel["Groups"].  Since DefaultViewModel is an **ObservableDictionary**, this works, we have a key of **Groups** and we can then bind to that property.  Which we do above!
+
+The next binding we encounter is:
+{% highlight c# %}
+<ListView ItemsSource="{Binding}">
+{% endhighlight %}
+
+Wait, don't we need to bind to something?!  The whole model broke apart!  Nope.  When we specify a binding without anything after it, we are actually binding to the parent item.  So in this case, we are rebinding to the Groups.  So every TextBlock that we print out is going to be part of the Groups Collection!
+
+Since we have an ItemTemplate, and a DataTemplate, that is really just saying that for every element in the Groups Collection, we are going to have a TextBlock, which has a Binding to Title.
+
+If we look what Group is made up of, it has a property called Title.  The TextBlock binds to the Title in the Groups collection.
+
+The only other thing that we should talk about is the ObservableDictionary and ObservableCollection.  The idea behind these is that when the collection changes, the UI automatically updates, without the programmer having to do anything!  No need to refresh the UI, to call a load method - as soon as the Collection changes, the UI updates!
+
+Thus concludes your Bindings tutorial.  I hope you found it useful, and hope that it cleared up some of the more confusing parts of Bindings.
+
+Some common questions that popup:
+
+**Q:** Does the **DefaultViewModel** need to be a dictionary?<br/>
+**A:** No. In this case the DefaultViewModel is a dictionary so we can bind multiple things to the same thing (with different keys).  You could in fact bind each HubSection (in our program) to a completely different collection.
+
+**Q:** Help, it's not working!<br/>
+**A:** There are many things that can go wrong, and usually do.  One of the easiest things I find is to set the DataContext and ItemSources in the code behind.  When you do this, it's a much more familiar syntax, such as *this.dataContext = myCollection*.

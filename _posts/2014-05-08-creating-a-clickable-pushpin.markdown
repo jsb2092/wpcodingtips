@@ -21,27 +21,33 @@ my loaded function then looks like this:
 {% highlight c# %}
 private void MyMap_OnLoaded(object sender, RoutedEventArgs e)
 {
+    // I get a handle to the map - this was created using a hub app
+    // which, for some reason does not give you a handle to the 
+    // variable, so we do everything in onLoaded
     myMap = (MapControl) sender;
-    myMap.Center = new Geopoint(new BasicGeoposition()
-    {
-        Altitude = 643, 
-        Latitude = 43.089863,
-        Longitude = -77.669609
-    });
-    myMap.ZoomLevel = 14;
+
+    // pick an arbitrary point to display the map, so we can see the pin
     fencePos = new BasicGeoposition()
     {
         Latitude = 43.089863, 
         Longitude = -77.669609
     };
+    myMap.Center = new Geopoint(fencePos);
+    myMap.ZoomLevel = 14;
+    
+    // create a point for the marker
     var point = new Geopoint(fencePos);
 
+    // we create a rectangle here, because shapes have a 
+    // Tapped event, and we can set the fill to an image
+    // 30x30 is big enough to hold our square image
     fence = new Windows.UI.Xaml.Shapes.Rectangle
     {
         Width = 30, 
         Height = 30
     };
 
+    // load the image and assign it to the fill of the shape
     var img = new BitmapImage(new Uri("ms-appx:///Assets/redpin.png"));
     fence.Fill = new ImageBrush()
     {
@@ -51,8 +57,10 @@ private void MyMap_OnLoaded(object sender, RoutedEventArgs e)
     MapControl.SetLocation(fence, point);
     MapControl.SetNormalizedAnchorPoint(fence, new Point(1.0, 0.5));
 
+    // add the shape to the map as a child element
     myMap.Children.Add(fence);
 
+    // create an anonymouse method to show a dialog when you tap it
     fence.Tapped += (o, args) =>
     {
         var myDialog = new MessageDialog( "You clicked on something");
